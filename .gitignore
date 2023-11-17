@@ -7,3 +7,4 @@ vendor/
 composer.lock
 .php_cs.cache
 coverage.clover
+.phpunit.result.cache
