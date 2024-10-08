@@ -63,7 +63,7 @@ EOT
         $configuration = $this->getMigrationConfiguration($input, $output);
         $version = $configuration->getVersion($version);
 
-        if (!$input->isInteractive()) {
+        if (!$input->isInteractive() || $configuration->isDryRun()) {
             $version->execute($direction, $replay);
         } else {
             $question = new ConfirmationQuestion(
