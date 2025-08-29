@@ -11,7 +11,6 @@
 
 namespace AntiMattr\MongoDB\Migrations\Collection;
 
-use Exception;
 use MongoDB\Collection;
 use MongoDB\Database;
 
@@ -20,15 +19,15 @@ use MongoDB\Database;
  */
 class Statistics
 {
-    const COUNT = 'count';
-    const SIZE = 'size';
-    const AVG_OBJ_SIZE = 'avgObjSize';
-    const STORAGE_SIZE = 'storageSize';
-    const NUM_EXTENTS = 'numExtents';
-    const NINDEXES = 'nindexes';
-    const LAST_EXTENT_SIZE = 'lastExtentSize';
-    const PADDING_FACTOR = 'paddingFactor';
-    const TOTAL_INDEX_SIZE = 'totalIndexSize';
+    public const COUNT = 'count';
+    public const SIZE = 'size';
+    public const AVG_OBJ_SIZE = 'avgObjSize';
+    public const STORAGE_SIZE = 'storageSize';
+    public const NUM_EXTENTS = 'numExtents';
+    public const NINDEXES = 'nindexes';
+    public const LAST_EXTENT_SIZE = 'lastExtentSize';
+    public const PADDING_FACTOR = 'paddingFactor';
+    public const TOTAL_INDEX_SIZE = 'totalIndexSize';
 
     public static $metrics = [
         self::COUNT,
@@ -43,7 +42,7 @@ class Statistics
     ];
 
     /**
-     * @var \MongoDB\Collection
+     * @var Collection
      */
     private $collection;
 
@@ -63,7 +62,7 @@ class Statistics
     }
 
     /**
-     * @param \MongoDB\Collection
+     * @param Collection
      */
     public function setCollection(Collection $collection)
     {
@@ -71,7 +70,7 @@ class Statistics
     }
 
     /**
-     * @return \MongoDB\Collection
+     * @return Collection
      */
     public function getCollection()
     {
@@ -122,13 +121,14 @@ class Statistics
     protected function getCollectionStats()
     {
         $name = $this->collection->getCollectionName();
-
-        if (!$data = $this->database->command(['collStats' => $name])) {
+        $result = $this->database->command(['collStats' => $name]);
+        $data = $result->toArray();
+        if (empty($data)) {
             $message = sprintf(
                 'Statistics not found for collection %s',
                 $name
             );
-            throw new Exception($message);
+            throw new \Exception($message);
         }
 
         return $data;

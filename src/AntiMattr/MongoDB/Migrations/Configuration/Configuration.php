@@ -29,7 +29,7 @@ class Configuration
     private $collection;
 
     /**
-     * @var \MongoDB\Client
+     * @var Client
      */
     private $connection;
 
@@ -40,7 +40,6 @@ class Configuration
 
     /**
      * The migration database name to track versions in.
-     *
      */
     private ?string $migrationsDatabaseName = null;
 
@@ -87,21 +86,18 @@ class Configuration
     private $name;
 
     /**
-     * @var \AntiMattr\MongoDB\Migrations\Version[]
+     * @var Version[]
      */
     protected $migrations = [];
 
     /**
-     * @var \AntiMattr\MongoDB\Migrations\OutputWriter
+     * @var OutputWriter
      */
     private $outputWriter;
     private ?string $file = null;
     private bool $dryRun = false;
 
-    /**
-     * @param \AntiMattr\MongoDB\Migrations\OutputWriter $outputWriter
-     */
-    public function __construct(Client $connection, OutputWriter $outputWriter = null)
+    public function __construct(Client $connection, ?OutputWriter $outputWriter = null)
     {
         $this->connection = $connection;
         if (null === $outputWriter) {
@@ -159,16 +155,13 @@ class Configuration
     }
 
     /**
-     * @return \MongoDB\Client
+     * @return Client
      */
     public function getConnection()
     {
         return $this->connection;
     }
 
-    /**
-     * @return \MongoDB\Database
-     */
     public function getDatabase(): ?\MongoDB\Database
     {
         if (isset($this->database)) {
@@ -190,19 +183,19 @@ class Configuration
         return $this->migrations;
     }
 
-    public function setMigrationsDatabaseName(string $databaseName)
+    public function setMigrationsDatabaseName(?string $databaseName)
     {
         $this->migrationsDatabaseName = $databaseName;
 
         return $this;
     }
 
-    public function setDryRun(bool $dryRun) : void
+    public function setDryRun(bool $dryRun): void
     {
         $this->dryRun = $dryRun;
     }
 
-    public function isDryRun() : bool
+    public function isDryRun(): bool
     {
         return $this->dryRun;
     }
@@ -304,15 +297,16 @@ class Configuration
     /**
      * Returns all migrated versions from the versions collection, in an array.
      *
-     * @return \AntiMattr\MongoDB\Migrations\Version[]
+     * @return Version[]
      */
     public function getMigratedVersions()
     {
         $this->createMigrationCollection();
 
         $cursor = $this->getCollection()->find();
+        $array = $cursor->toArray();
         $versions = [];
-        foreach ($cursor as $record) {
+        foreach ($array as $record) {
             $versions[] = $record['v'];
         }
 
@@ -399,7 +393,7 @@ class Configuration
     }
 
     /**
-     * @return \AntiMattr\MongoDB\Migrations\OutputWriter
+     * @return OutputWriter
      */
     public function getOutputWriter()
     {
@@ -485,7 +479,7 @@ class Configuration
      *
      * @param string $version The version string in the format YYYYMMDDHHMMSS
      *
-     * @return \AntiMattr\MongoDB\Migrations\Version
+     * @return Version
      *
      * @throws AntiMattr\MongoDB\Migrations\Exception\UnknownVersionException Throws exception if migration version does not exist
      */

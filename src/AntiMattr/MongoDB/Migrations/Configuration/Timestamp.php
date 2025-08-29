@@ -21,9 +21,6 @@ class Timestamp
 {
     private $t;
 
-    /**
-     * @param mixed $t
-     */
     public function __construct($t)
     {
         $this->t = $t;

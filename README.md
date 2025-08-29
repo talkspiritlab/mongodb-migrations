@@ -1,10 +1,12 @@
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-[![Build Status](https://travis-ci.org/doesntmattr/mongodb-migrations.png?branch=master)](https://travis-ci.org/doesntmattr/mongodb-migrations)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/doesntmattr/mongodb-migrations/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/doesntmattr/mongodb-migrations/?branch=master)
-[![Latest Stable Version](https://poser.pugx.org/doesntmattr/mongodb-migrations/v/stable)](https://packagist.org/packages/doesntmattr/mongodb-migrations)
-[![Total Downloads](https://poser.pugx.org/doesntmattr/mongodb-migrations/downloads)](https://packagist.org/packages/doesntmattr/mongodb-migrations)
+[![Build Status](https://travis-ci.org/devture/mongodb-migrations.png?branch=master)](https://travis-ci.org/doesntmattr/mongodb-migrations)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/devture/mongodb-migrations/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/devture/mongodb-migrations/?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/devture/mongodb-migrations/v/stable)](https://packagist.org/packages/devture/mongodb-migrations)
+[![Total Downloads](https://poser.pugx.org/devture/mongodb-migrations/downloads)](https://packagist.org/packages/devture/mongodb-migrations)
 
 # MongoDB Migrations
+
+**2022-02-05**: This is a fork of the `antimattr/mongodb-migrations` library, which makes it work on PHP 8 and Symfony 6.
 
 The MongoDB Migration library provides managed migration support for MongoDB. It was moved to the doesntmattr organisation from [antimattr/mongodb-migrations](https://github.com/antimattr/mongodb-migrations) to continue maintenance (See [issue 16](https://github.com/antimattr/mongodb-migrations/issues/16)).
 
@@ -20,18 +22,14 @@ If you require php 5.6 support use version `^1.0`. Version `^3.0` requires at le
 
 There is a Symfony Bundle you can install to more easily integrate with Symfony. Use the installation instructions there:
 
-https://github.com/doesntmattr/mongodb-migrations-bundle
+https://github.com/devture/mongodb-migrations-bundle
 
 ## Installation
 
 To install with composer:
 
 ```bash
-# For php 5.6
-composer require "doesntmattr/mongodb-migrations=^1.0"
-
-# For php 7.1
-composer require "doesntmattr/mongodb-migrations=^3.0"
+composer require "devture/mongodb-migrations=^4.0"
 ```
 
 ## Features
@@ -184,10 +182,10 @@ Generated new migration class to "Example/Migrations/TestAntiMattr/MongoDB/Versi
 This is what you will execute during your deployment process.
 
 ```bash
-./console mongodb:migrations:migrate --db-configuration=config/test_antimattr_mongodb.php --configuration=config/test_antimattr_mongodb.yml 
-                                                                    
-                    AntiMattr Example Migrations                    
-                                                                    
+./console mongodb:migrations:migrate --db-configuration=config/test_antimattr_mongodb.php --configuration=config/test_antimattr_mongodb.yml
+
+                    AntiMattr Example Migrations
+
 
 WARNING! You are about to execute a database migration that could result in data lost. Are you sure you wish to continue? (y/n)y
 Migrating up to 20140822185744 from 0
@@ -197,17 +195,17 @@ Migrating up to 20140822185744 from 0
 
      Collection test_a
 
-     metric           before               after                difference           
+     metric           before               after                difference
      ================================================================================
-     count            100                  100                  0                   
-     size             20452                20452                0                   
-     avgObjSize       204.52               204.52               0                   
-     storageSize      61440                61440                0                   
-     numExtents       2                    2                    0                   
-     nindexes         1                    2                    1                   
-     lastExtentSize   49152                49152                0                   
-     paddingFactor    1                    1                    0                   
-     totalIndexSize   8176                 16352                8176                
+     count            100                  100                  0
+     size             20452                20452                0
+     avgObjSize       204.52               204.52               0
+     storageSize      61440                61440                0
+     numExtents       2                    2                    0
+     nindexes         1                    2                    1
+     lastExtentSize   49152                49152                0
+     paddingFactor    1                    1                    0
+     totalIndexSize   8176                 16352                8176
 
   ++ migrated (0.03s)
 
@@ -238,17 +236,17 @@ WARNING! You are about to execute a database migration that could result in data
 
      Collection test_a
 
-     metric           before               after                difference           
+     metric           before               after                difference
      ================================================================================
-     count            100                  100                  0                   
-     size             20620                20620                0                   
-     avgObjSize       206.2                206.2                0                   
-     storageSize      61440                61440                0                   
-     numExtents       2                    2                    0                   
-     nindexes         1                    2                    1                   
-     lastExtentSize   49152                49152                0                   
-     paddingFactor    1                    1                    0                   
-     totalIndexSize   8176                 16352                8176                
+     count            100                  100                  0
+     size             20620                20620                0
+     avgObjSize       206.2                206.2                0
+     storageSize      61440                61440                0
+     numExtents       2                    2                    0
+     nindexes         1                    2                    1
+     lastExtentSize   49152                49152                0
+     paddingFactor    1                    1                    0
+     totalIndexSize   8176                 16352                8176
 
   ++ migrated (0.02s)
 ```
@@ -322,7 +320,7 @@ There is a git pre-commit hook that will fix all your contributed code to PSR st
 You can install it with:
 
 ```bash
-./bin/install.sh 
+./bin/install.sh
 Copying /antimattr-mongodb-migrations/bin/pre-commit.sh -> /antimattr-mongodb-migrations/bin/../.git/hooks/pre-commit
 ```
 

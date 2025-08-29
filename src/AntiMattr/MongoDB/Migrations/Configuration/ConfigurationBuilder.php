@@ -23,7 +23,7 @@ use Symfony\Component\Yaml\Yaml;
 class ConfigurationBuilder
 {
     /**
-     * @var \MongoDB\Client
+     * @var Client
      */
     private $connection;
 
@@ -117,7 +117,7 @@ class ConfigurationBuilder
 
         $config->setName($this->configParams['name'])
             ->setFile($this->configFile)
-            ->setMigrationsDatabaseName((string) $this->configParams['database'])
+            ->setMigrationsDatabaseName($this->configParams['database'])
             ->setMigrationsCollectionName($this->configParams['collection_name'])
             ->setMigrationsNamespace($this->configParams['migrations_namespace'])
         ;

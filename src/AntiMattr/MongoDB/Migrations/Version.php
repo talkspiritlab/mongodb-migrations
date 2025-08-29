@@ -15,7 +15,6 @@ use AntiMattr\MongoDB\Migrations\Collection\Statistics;
 use AntiMattr\MongoDB\Migrations\Configuration\Configuration;
 use AntiMattr\MongoDB\Migrations\Exception\AbortException;
 use AntiMattr\MongoDB\Migrations\Exception\SkipException;
-use Exception;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
 use MongoDB\Database;
@@ -25,10 +24,10 @@ use MongoDB\Database;
  */
 class Version
 {
-    const STATE_NONE = 0;
-    const STATE_PRE = 1;
-    const STATE_EXEC = 2;
-    const STATE_POST = 3;
+    public const STATE_NONE = 0;
+    public const STATE_PRE = 1;
+    public const STATE_EXEC = 2;
+    public const STATE_POST = 3;
 
     /**
      * @var string
@@ -36,22 +35,22 @@ class Version
     private $class;
 
     /**
-     * @var \AntiMattr\MongoDB\Migrations\Configuration\Configuration
+     * @var Configuration
      */
     private $configuration;
 
     /**
-     * @var \MongoDB\Database
+     * @var Database
      */
     private $db;
 
     /**
-     * @var \AntiMattr\MongoDB\Migrations\AbstractMigration
+     * @var AbstractMigration
      */
     protected $migration;
 
     /**
-     * @var \AntiMattr\MongoDB\Migrations\OutputWriter
+     * @var OutputWriter
      */
     private $outputWriter;
 
@@ -63,7 +62,7 @@ class Version
     private $version;
 
     /**
-     * @var \AntiMattr\MongoDB\Migrations\Collection\Statistics[]
+     * @var Statistics[]
      */
     private $statistics = [];
 
@@ -88,7 +87,7 @@ class Version
     }
 
     /**
-     * @return \AntiMattr\MongoDB\Migrations\Configuration\Configuration $configuration
+     * @return Configuration $configuration
      */
     public function getConfiguration()
     {
@@ -110,7 +109,7 @@ class Version
     }
 
     /**
-     * @return \AntiMattr\MongoDB\Migrations\AbstractMigration
+     * @return AbstractMigration
      */
     public function getMigration()
     {
@@ -144,7 +143,7 @@ class Version
     }
 
     /**
-     * @param \MongoDB\Collection
+     * @param Collection
      */
     public function analyze(Collection $collection)
     {
@@ -244,16 +243,13 @@ class Version
     }
 
     /**
-     * @param \MongoDB\Database
      * @param string $file
-     *
-     * @return array
      *
      * @throws RuntimeException
      * @throws InvalidArgumentException
-     * @throws Exception
+     * @throws \Exception
      */
-    public function executeScript(Database $db, $file)
+    public function executeScript(Database $db, $file): \MongoDB\Driver\Cursor
     {
         $scripts = $this->configuration->getMigrationsScriptDirectory();
         if (null === $scripts) {
@@ -368,7 +364,7 @@ class Version
     }
 
     /**
-     * @return \AntiMattr\MongoDB\Migrations\AbstractMigration
+     * @return AbstractMigration
      */
     protected function createMigration()
     {
@@ -384,7 +380,7 @@ class Version
     }
 
     /**
-     * @return \AntiMattr\MongoDB\Migrations\Collection\Statistics
+     * @return Statistics
      */
     protected function createStatistics()
     {

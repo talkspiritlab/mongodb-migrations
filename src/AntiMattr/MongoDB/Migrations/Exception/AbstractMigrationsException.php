@@ -11,11 +11,9 @@
 
 namespace AntiMattr\MongoDB\Migrations\Exception;
 
-use RuntimeException;
-
 /**
  * @author Matthew Fitzgerald <matthewfitz@gmail.com>
  */
-abstract class AbstractMigrationsException extends RuntimeException
+abstract class AbstractMigrationsException extends \RuntimeException
 {
 }

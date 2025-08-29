@@ -19,7 +19,7 @@ class ExecuteCommandTest extends TestCase
     private $config;
     private $version;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->command = new ExecuteCommand();
         $this->output = $this->createMock('Symfony\Component\Console\Output\OutputInterface');
@@ -38,7 +38,7 @@ class ExecuteCommandTest extends TestCase
         $input = new ArgvInput(
             [
                 'application-name',
-                ExecuteCommand::getDefaultName(),
+                'mongodb:migrations:execute',
                 $numVersion,
                 '--down',
             ]
@@ -89,7 +89,7 @@ class ExecuteCommandTest extends TestCase
         $input = new ArgvInput(
             [
                 'application-name',
-                ExecuteCommand::getDefaultName(),
+                'mongodb:migrations:execute',
                 $numVersion,
             ]
         );
@@ -144,6 +144,7 @@ class ExecuteCommandTest extends TestCase
         ;
 
         $this->command->setMigrationConfiguration($this->config);
+        $this->command->setName('mongodb:migrations:migrate');
 
         $application = new Application();
         $application->setAutoExit(false);
@@ -153,7 +154,7 @@ class ExecuteCommandTest extends TestCase
         $commandTester->setInputs(["\n"]);
         $commandTester->execute(['version' => $numVersion]);
 
-        $this->assertRegExp('/Migration cancelled/', $commandTester->getDisplay());
+        $this->assertMatchesRegularExpression('/Migration cancelled/', $commandTester->getDisplay());
     }
 
     public function testExecuteReplayWithoutInteraction()
@@ -167,7 +168,7 @@ class ExecuteCommandTest extends TestCase
         $input = new ArgvInput(
             [
                 'application-name',
-                ExecuteCommand::getDefaultName(),
+                'mongodb:migrations:execute',
                 $numVersion,
                 '--up',
                 '--replay',

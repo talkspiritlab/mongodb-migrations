@@ -24,7 +24,7 @@ class ExecuteCommand extends AbstractCommand
 {
     protected static $defaultName = 'mongodb:migrations:execute';
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Execute a single migration version up or down manually.')
@@ -45,16 +45,12 @@ Or you can also execute the migration without a warning message which you need t
 
     <info>%command.full_name% --no-interaction</info>
 EOT
-        );
+            );
 
         parent::configure();
     }
 
-    /**
-     * @param \Symfony\Component\Console\Input\InputInterface
-     * @param \Symfony\Component\Console\Output\OutputInterface
-     */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $version = $input->getArgument('version');
         $direction = $input->getOption('down') ? 'down' : 'up';

@@ -26,7 +26,7 @@ class VersionCommand extends AbstractCommand
 {
     protected static $defaultName = 'mongodb:migrations:version';
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Manually add and delete migration versions from the version table.')
@@ -42,19 +42,16 @@ If you want to delete a version you can use the <comment>--delete</comment> opti
 
     <info>%command.full_name% YYYYMMDDHHMMSS --delete</info>
 EOT
-        );
+            );
 
         parent::configure();
     }
 
     /**
-     * @param \Symfony\Component\Console\Input\InputInterface
-     * @param \Symfony\Component\Console\Output\OutputInterface
-     *
-     * @throws UnknownVersionException Throws exception if migration version does not exist
+     * @throws UnknownVersionException   Throws exception if migration version does not exist
      * @throws \InvalidArgumentException
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $configuration = $this->getMigrationConfiguration($input, $output);
         $migration = $this->createMigration($configuration);
