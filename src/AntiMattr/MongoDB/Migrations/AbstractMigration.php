@@ -23,17 +23,17 @@ use MongoDB\Database;
 abstract class AbstractMigration
 {
     /**
-     * @var \AntiMattr\MongoDB\Migrations\Configuration\Configuration
+     * @var Configuration\Configuration
      */
     private $configuration;
 
     /**
-     * @var \AntiMattr\MongoDB\Migrations\OutputWriter
+     * @var OutputWriter
      */
     private $outputWriter;
 
     /**
-     * @var \AntiMattr\MongoDB\Migrations\Version
+     * @var Version
      */
     protected $version;
 
@@ -56,7 +56,7 @@ abstract class AbstractMigration
     abstract public function down(Database $db);
 
     /**
-     * @param \MongoDB\Collection
+     * @param Collection
      */
     protected function analyze(Collection $collection)
     {
@@ -69,7 +69,6 @@ abstract class AbstractMigration
     }
 
     /**
-     * @param \MongoDB\Database
      * @param string $filename
      */
     protected function executeScript(Database $db, $filename)
@@ -86,11 +85,9 @@ abstract class AbstractMigration
     }
 
     /**
-     * @param string $message
-     *
      * @throws AntiMattr\MongoDB\Migrations\Exception\IrreversibleException
      */
-    protected function throwIrreversibleMigrationException($message = null)
+    protected function throwIrreversibleMigrationException(?string $message = null)
     {
         if (null === $message) {
             $message = 'This migration is irreversible and cannot be reverted.';

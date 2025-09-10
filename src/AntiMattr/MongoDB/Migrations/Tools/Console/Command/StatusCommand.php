@@ -24,7 +24,7 @@ class StatusCommand extends AbstractCommand
 {
     protected static $defaultName = 'mongodb:migrations:status';
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('View the status of a set of migrations.')
@@ -43,16 +43,12 @@ You can output a list of all available migrations and their status with <comment
 
     <info>%command.full_name% --show-versions</info>
 EOT
-        );
+            );
 
         parent::configure();
     }
 
-    /**
-     * @param \Symfony\Component\Console\Input\InputInterface
-     * @param \Symfony\Component\Console\Output\OutputInterface
-     */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $configuration = $this->getMigrationConfiguration($input, $output);
         $configMap = $configuration->getDetailsMap();

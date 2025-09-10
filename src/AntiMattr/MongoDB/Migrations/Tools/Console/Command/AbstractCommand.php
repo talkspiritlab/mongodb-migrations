@@ -27,7 +27,7 @@ abstract class AbstractCommand extends Command
 {
     private ?Configuration $configuration = null;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->addOption(
             'configuration', null, InputOption::VALUE_OPTIONAL, 'The path to a migrations configuration file.'
@@ -52,7 +52,7 @@ abstract class AbstractCommand extends Command
     }
 
     /**
-     * @param \AntiMattr\MongoDB\Migrations\Configuration\Configuration
+     * @param Configuration
      */
     public function setMigrationConfiguration(Configuration $config)
     {
@@ -61,8 +61,13 @@ abstract class AbstractCommand extends Command
 
     protected function getMigrationConfiguration(
         InputInterface $input,
-        OutputInterface $output
+        OutputInterface $output,
     ): Configuration {
+        if ($this->getApplication()->getHelperSet()->has('mongoMigrationsConfig')) {
+            return $this->getHelper('mongoMigrationsConfig')
+                ->getConfig();
+        }
+
         if (!$this->configuration) {
             $conn = $this->getDatabaseConnection($input);
 
@@ -119,7 +124,7 @@ abstract class AbstractCommand extends Command
     /**
      * @param array $params
      *
-     * @return \MongoDB\Client
+     * @return Client
      */
     protected function createConnection($params)
     {
@@ -139,8 +144,8 @@ abstract class AbstractCommand extends Command
         $server = sprintf(
             'mongodb://%s%s:%s%s',
             $credentials,
-            (isset($params['host']) ? $params['host'] : 'localhost'),
-            (isset($params['port']) ? $params['port'] : '27017'),
+            isset($params['host']) ? $params['host'] : 'localhost',
+            isset($params['port']) ? $params['port'] : '27017',
             $database
         );
 

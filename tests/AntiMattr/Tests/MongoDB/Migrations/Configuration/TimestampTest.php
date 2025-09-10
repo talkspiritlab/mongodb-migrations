@@ -56,19 +56,15 @@ class TimestampTest extends TestCase
         return $timestamps;
     }
 
-    /**
-     * @expectedException \DomainException
-     */
     public function testWillThrowAnExceptionForUnknownClass()
     {
+        $this->expectException(\DomainException::class);
         (new Timestamp(new \stdClass()))->getTimestamp();
     }
 
-    /**
-     * @expectedException \DomainException
-     */
     public function testWillThrowAnExceptionForNull()
     {
+        $this->expectException(\DomainException::class);
         (new Timestamp(null))->getTimestamp();
     }
 }

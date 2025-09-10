@@ -5,6 +5,8 @@ namespace AntiMattr\Tests\MongoDB\Migrations\Tools\Console\Command;
 use AntiMattr\MongoDB\Migrations\Tools\Console\Command\GenerateCommand;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArgvInput;
 
 /**
@@ -43,7 +45,7 @@ class GenerateCommandTest extends TestCase
 
         $input = new ArgvInput(
             [
-                GenerateCommand::getDefaultName(),
+                'mongodb:migrations:generate',
             ]
         );
 
@@ -60,6 +62,8 @@ class GenerateCommandTest extends TestCase
                 $this->returnValue(vfsStream::url($migrationsDirectory))
             )
         ;
+        $application = new Application();
+        $this->command->setApplication($application);
 
         $this->command->run(
             $input,
@@ -75,11 +79,9 @@ class GenerateCommandTest extends TestCase
         $this->assertTrue($root->hasChild($filename));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testExecuteWithInvalidMigrationDirectory()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $migrationsNamespace = 'migrations-namespace';
         $migrationsDirectory = 'missing-directory';
 
@@ -87,7 +89,7 @@ class GenerateCommandTest extends TestCase
 
         $input = new ArgvInput(
             [
-                GenerateCommand::getDefaultName(),
+                'mongodb:migrations:generate',
             ]
         );
 
@@ -109,6 +111,16 @@ class GenerateCommandTest extends TestCase
                 )
             )
         ;
+
+        $question = $this->createMock('Symfony\Component\Console\Helper\QuestionHelper');
+        $application = new Application();
+        $helperSet = new HelperSet(
+            [
+                'question' => $question,
+            ]
+        );
+        $application->setHelperSet($helperSet);
+        $this->command->setApplication($application);
 
         // Run command, run.
         $this->command->run(

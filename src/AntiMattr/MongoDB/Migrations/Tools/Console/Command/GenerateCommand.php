@@ -23,8 +23,8 @@ class GenerateCommand extends AbstractCommand
 {
     protected static $defaultName = 'mongodb:migrations:generate';
 
-    private static $_template =
-            '<?php
+    protected static $_template =
+        '<?php
 
 namespace <namespace>;
 
@@ -58,7 +58,7 @@ class Version<version> extends AbstractMigration
 }
 ';
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
                 ->setDescription('Generate a blank migration class.')
@@ -72,16 +72,12 @@ You can optionally specify a <comment>--editor-cmd</comment> option to open the 
 
     <info>%command.full_name% --editor-cmd=mate</info>
 EOT
-        );
+                );
 
         parent::configure();
     }
 
-    /**
-     * @param \Symfony\Component\Console\Input\InputInterface
-     * @param \Symfony\Component\Console\Output\OutputInterface
-     */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $configuration = $this->getMigrationConfiguration($input, $output);
 
@@ -94,17 +90,11 @@ EOT
     }
 
     /**
-     * @param \AntiMattr\MongoDB\Migrations\Configuration\Configuration
-     * @param \Symfony\Component\Console\Input\InputInterface
-     * @param string $version
-     * @param string $up
-     * @param string $down
-     *
      * @return string $path
      *
      * @throws \InvalidArgumentException
      */
-    protected function generateMigration(Configuration $configuration, InputInterface $input, $version, $up = null, $down = null)
+    protected function generateMigration(Configuration $configuration, InputInterface $input, ?string $version, ?string $up = null, ?string $down = null)
     {
         $placeHolders = [
             '<namespace>',

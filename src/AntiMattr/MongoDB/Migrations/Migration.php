@@ -46,12 +46,12 @@ class Migration
     /**
      * Run a migration to the current version or the given target version.
      *
-     * @param string $to The version to migrate to
+     * @param string|null $to The version to migrate to
      *
      * @throws AntiMattr\MongoDB\Migrations\Exception\UnknownVersionException
      * @throws AntiMattr\MongoDB\Migrations\Exception\NoMigrationsToExecuteException
      */
-    public function migrate($to = null)
+    public function migrate(?string $to = null)
     {
         if (null === $to) {
             $to = $this->configuration->getLatestVersion();

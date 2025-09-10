@@ -3,6 +3,7 @@
 namespace AntiMattr\Tests\MongoDB\Migrations\Configuration;
 
 use AntiMattr\MongoDB\Migrations\Configuration\Configuration;
+use MongoDB\Driver\CursorInterface;
 use PHPUnit\Framework\TestCase;
 
 class ConfigurationTest extends TestCase
@@ -47,12 +48,21 @@ class ConfigurationTest extends TestCase
 
     public function testGetCurrentVersion()
     {
-        $this->prepareValidConfiguration();
-
         $directory = dirname(__DIR__) . '/Resources/Migrations/';
-        $this->configuration->registerMigrationsFromDirectory($directory);
-
         $collection = $this->createMock('MongoDB\Collection');
+        $cursor = $this->createMock(CursorInterface::class);
+        $cursor->expects($this->once())
+            ->method('toArray')
+            ->willReturn([['v' => '20140822185743']]);
+
+        $in = ['v' => ['$in' => ['20140822185742', '20140822185743', '20140822185744']]];
+        $options = ['sort' => ['v' => -1], 'limit' => 1];
+
+        $collection->expects($this->once())
+            ->method('find')
+            ->with($in, $options)
+            ->willReturn($cursor);
+
         $database = $this->createMock('MongoDB\Database');
 
         $this->connection->expects($this->once())
@@ -65,19 +75,8 @@ class ConfigurationTest extends TestCase
             ->with('antimattr_migration_versions_test')
             ->willReturn($collection);
 
-        $cursor = $this->createMock('AntiMattr\Tests\MongoDB\Migrations\Configuration\CursorStub');
-
-        $in = ['v' => ['$in' => ['20140822185742', '20140822185743', '20140822185744']]];
-        $options = ['sort' => ['v' => -1], 'limit' => 1];
-
-        $collection->expects($this->once())
-            ->method('find')
-            ->with($in, $options)
-            ->willReturn($cursor);
-
-        $cursor->expects($this->once())
-            ->method('toArray')
-            ->willReturn([['v' => '20140822185743']]);
+        $this->prepareValidConfiguration();
+        $this->configuration->registerMigrationsFromDirectory($directory);
 
         $version = $this->configuration->getCurrentVersion();
 
@@ -101,8 +100,6 @@ class ConfigurationTest extends TestCase
 
     public function testGetMigratedVersions()
     {
-        $this->prepareValidConfiguration();
-
         $collection = $this->createMock('MongoDB\Collection');
         $database = $this->createMock('MongoDB\Database');
 
@@ -120,16 +117,21 @@ class ConfigurationTest extends TestCase
             ['v' => 'found1'],
             ['v' => 'found2'],
         ];
+        $cursor = $this->createMock(CursorInterface::class);
+        $cursor->expects($this->once())
+            ->method('toArray')
+            ->willReturn($foundVersions);
+
+        $collection->expects($this->once())
+            ->method('find')
+            ->willReturn($cursor);
 
         $expectedVersions = [
             'found1',
             'found2',
         ];
 
-        $collection->expects($this->once())
-            ->method('find')
-            ->willReturn($foundVersions);
-
+        $this->prepareValidConfiguration();
         $versions = $this->configuration->getMigratedVersions();
         $this->assertEquals($expectedVersions, $versions);
     }
@@ -160,6 +162,8 @@ class ConfigurationTest extends TestCase
 
     public function testRegisterMigrationsFromDirectory()
     {
+        $this->prepareValidConfiguration();
+
         $this->configuration->setMigrationsNamespace('Example\Migrations\TestAntiMattr\MongoDB');
         $this->assertFalse($this->configuration->hasVersion('20140822185742'));
 
@@ -175,11 +179,9 @@ class ConfigurationTest extends TestCase
         $version = $this->configuration->getVersion('20140822185742');
     }
 
-    /**
-     * @expectedException \AntiMattr\MongoDB\Migrations\Exception\UnknownVersionException
-     */
     public function testGetVersionThrowsUnknownVersionException()
     {
+        $this->expectException(\AntiMattr\MongoDB\Migrations\Exception\UnknownVersionException::class);
         $this->configuration->getVersion('20140822185742');
     }
 
@@ -214,7 +216,7 @@ class ConfigurationTest extends TestCase
         $collection->expects($this->at(1))
             ->method('findOne')
             ->with(['v' => 'found'])
-            ->willReturn('foo');
+            ->willReturn(['foo' => 'bar']);
 
         $collection->expects($this->at(2))
             ->method('findOne')
@@ -225,11 +227,9 @@ class ConfigurationTest extends TestCase
         $this->assertFalse($this->configuration->hasVersionMigrated($version2));
     }
 
-    /**
-     * @expectedException \AntiMattr\MongoDB\Migrations\Exception\ConfigurationValidationException
-     */
     public function testValidateThrowsConfigurationValidationException()
     {
+        $this->expectException(\AntiMattr\MongoDB\Migrations\Exception\ConfigurationValidationException::class);
         $this->configuration->validate();
     }
 
@@ -255,12 +255,10 @@ class ConfigurationTest extends TestCase
         self::assertNull($this->configuration->validate());
     }
 
-    /**
-     * @expectedException \DomainException
-     * @expectedExceptionMessage Unexpected duplicate version records in the database
-     */
     public function testDuplicateInGetMigratedTimestampThrowsException()
     {
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Unexpected duplicate version records in the database');
         $this->prepareValidConfiguration();
 
         $collection = $this->createMock('MongoDB\Collection');
@@ -276,7 +274,7 @@ class ConfigurationTest extends TestCase
             ->with('antimattr_migration_versions_test')
             ->willReturn($collection);
 
-        $cursor = $this->createMock('AntiMattr\Tests\MongoDB\Migrations\Configuration\CursorStub');
+        $cursor = $this->createMock(CursorInterface::class);
 
         $collection->expects($this->once())
             ->method('find')
@@ -306,7 +304,7 @@ class ConfigurationTest extends TestCase
             ->with('antimattr_migration_versions_test')
             ->willReturn($collection);
 
-        $cursor = $this->createMock('AntiMattr\Tests\MongoDB\Migrations\Configuration\CursorStub');
+        $cursor = $this->createMock(CursorInterface::class);
 
         $collection->expects($this->once())
             ->method('find')

@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -18,7 +19,7 @@ class MigrateCommandTest extends TestCase
     private $command;
     private $output;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->command = new MigrateCommandStub();
         $this->output = $this->createMock('Symfony\Component\Console\Output\OutputInterface');
@@ -37,7 +38,7 @@ class MigrateCommandTest extends TestCase
         $input = new ArgvInput(
             [
                 'application-name',
-                MigrateCommand::getDefaultName(),
+                'mongodb:migrations:migrate',
                 $numVersion,
             ]
         );
@@ -101,12 +102,10 @@ class MigrateCommandTest extends TestCase
 
         // Variables and Objects
         $numVersion = '000123456789';
-        $input = new ArgvInput(
-            [
-                MigrateCommand::getDefaultName(),
-                $numVersion,
-            ]
-        );
+        $input = new ArrayInput([
+            'command' => 'mongodb:migrations:migrate',
+            'version' => $numVersion,
+        ]);
         $interactive = false;
         $availableVersions = [$availableVersion];
 
@@ -135,6 +134,10 @@ class MigrateCommandTest extends TestCase
             ->with($numVersion)
         ;
 
+        $application = new Application();
+
+        $this->command->setApplication($application);
+
         // Run command, run.
         $this->command->run(
             $input,
@@ -153,6 +156,7 @@ class MigrateCommandTest extends TestCase
             ->with($numVersion)
         ;
         $this->command->setMigration($migration);
+        $this->command->setName('mongodb:migrations:migrate');
 
         $configuration = $this->createMock(Configuration::class);
         $configuration->expects($this->once())
@@ -175,7 +179,7 @@ class MigrateCommandTest extends TestCase
         $commandTester->setInputs(["\n"]);
         $commandTester->execute(['version' => $numVersion]);
 
-        $this->assertRegExp('/Migration cancelled/', $commandTester->getDisplay());
+        $this->assertMatchesRegularExpression('/Migration cancelled/', $commandTester->getDisplay());
     }
 
     public function testDefaultSecondInteractionWillCancelMigration()
@@ -189,6 +193,7 @@ class MigrateCommandTest extends TestCase
             ->with($numVersion)
         ;
         $this->command->setMigration($migration);
+        $this->command->setName('mongodb:migrations:migrate');
 
         $configuration = $this->createMock(Configuration::class);
         $configuration->expects($this->once())
@@ -211,7 +216,7 @@ class MigrateCommandTest extends TestCase
         $commandTester->setInputs(['y', "\n"]);
         $commandTester->execute(['version' => $numVersion]);
 
-        $this->assertRegExp('/Migration cancelled/', $commandTester->getDisplay());
+        $this->assertMatchesRegularExpression('/Migration cancelled/', $commandTester->getDisplay());
     }
 }
 

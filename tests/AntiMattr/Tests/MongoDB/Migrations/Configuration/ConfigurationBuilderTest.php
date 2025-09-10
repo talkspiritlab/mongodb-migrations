@@ -13,7 +13,7 @@ class ConfigurationBuilderTest extends TestCase
     {
         $conn = $this->createMock('MongoDB\Client');
         $outputWriter = new OutputWriter();
-        $onDiskConfig = '';
+        $onDiskConfig = dirname(__DIR__) . '/Resources/fixtures/config-empty.yml';
 
         $config = ConfigurationBuilder::create()
             ->setConnection($conn)
